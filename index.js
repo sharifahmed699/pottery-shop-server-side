@@ -52,6 +52,13 @@ async function run() {
             res.json(result)
 
         })
+        // GET API for order fetch all order
+        app.get('/order', async (req, res) => {
+            const cursor = orderCollection.find({})
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
         // POST API for order a product
         app.post('/order', async (req, res) => {
             const order = req.body;
@@ -67,6 +74,20 @@ async function run() {
             const specificUserBooking = await orderCollection.find(query).toArray()
             res.send(specificUserBooking);
         })
+        //UPDATE API
+        app.put('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedStatus = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: updatedStatus.status
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc, options)
+            res.json(result)
+        })
         // Delete API for my order item
         app.delete('/order/:id', async (req, res) => {
             const id = req.params.id
@@ -75,7 +96,7 @@ async function run() {
             res.json(result)
 
         })
-        // GET API for user review item
+        // GET API for all user review item
         app.get('/review', async (req, res) => {
             const cursor = reviewCollection.find({})
             const result = await cursor.toArray()
@@ -86,6 +107,12 @@ async function run() {
             const order = req.body;
             const result = await reviewCollection.insertOne(order);
             res.json(result);
+        })
+        // GET API for All user 
+        app.get('/users', async (req, res) => {
+            const cursor = userCollection.find({})
+            const result = await cursor.toArray()
+            res.send(result)
         })
 
         //POST API for add user 
